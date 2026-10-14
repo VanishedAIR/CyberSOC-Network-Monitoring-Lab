@@ -46,13 +46,14 @@ After enabling Suricata as a service and rebooting, I confirmed that live alerts
 ## Evidence
 
 - [Architecture and firewall policy](docs/architecture.md)
+- [Captioned lab screenshots](docs/screenshots.md)
 - [GET/HEAD results, verification commands and evidence dates](docs/test-results.md)
 - [Custom Suricata rule](configs/suricata/local.rules)
 - [GET/HEAD packet capture](evidence/pcaps/get-head.pcap)
 - [Selected HTTP and alert events](evidence/logs/get-head-events.jsonl)
 - [Monitor service status](evidence/logs/suricata-status.txt)
 
-The repository includes selected configuration exports and test artifacts. Screenshots and persistent per-VM configuration files will be added as they are collected.
+The repository includes selected configuration exports and test artifacts. Selected setup screenshots are included; persistent per-VM configuration files will be added as they are collected.
 
 ## Limitations
 
@@ -62,6 +63,6 @@ The repository includes selected configuration exports and test artifacts. Scree
 
 ## Next Steps
 
-- Add selected screenshots and a rendered topology diagram.
+- Add a rendered topology diagram.
 - Export persistent per-VM network and Suricata service configuration.
 - Extend detection coverage with additional positive and negative tests.
