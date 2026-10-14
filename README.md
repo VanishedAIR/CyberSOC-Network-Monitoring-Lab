@@ -69,23 +69,25 @@ Client and server use separate subnets, `10.77.10.0/24` and `10.77.20.0/24`. HTT
 
 VMware, Ubuntu, nftables, tcpdump, curl, Suricata 7.0.3 and jq.
 
-## Completed Milestones
+## Completed Work
 
-1. Built the three VMs with separate client and server subnets and addressed each interface.
-2. Configured static routes and Linux IPv4 forwarding on the monitor, plus nftables rules.
-3. Sent client-to-server HTTP traffic on port 8080 and captured it on the monitor.
-4. Analyzed the capture offline with Suricata.
-5. Wrote a custom HTTP GET detection rule (SID 1000001).
-6. Validated the rule with GET and HEAD requests.
-7. Ran Suricata for live detection and enabled it as a systemd service.
-8. Rebooted and confirmed that live alerts still fired.
-9. Inspected Suricata's EVE JSON event and alert records with jq.
+- **Network configuration:** Built three VMs, configured addressing and routes, and enabled IPv4 forwarding with nftables rules on the monitor.
+- **Packet capture:** Generated HTTP traffic from the client to the server on port 8080 and captured it with tcpdump.
+- **Detection testing:** Analyzed the capture offline with Suricata and validated custom rule SID 1000001 using GET and HEAD requests.
+- **Live monitoring:** Enabled Suricata as a systemd service, confirmed alerts after reboot and inspected EVE JSON events with jq.
 
 ## Detection Validation
 
-I sent both a GET and a HEAD request from the client to the server. Suricata logged both as HTTP transactions, and the custom rule alerted on the GET request only. That confirms the rule matches the method it was written for and does not fire on a different HTTP method.
+Both requests targeted `/` on the lab server:
 
-After enabling Suricata as a service and rebooting, I confirmed that live alerts were still generated.
+| Request | HTTP response | Alerts for SID 1000001 |
+|---|---|---|
+| GET | 200 | 1 |
+| HEAD | 200 | 0 |
+
+The GET HTTP record and alert share the same flow ID. The HEAD transaction is logged without an alert for this rule. These two cases validate the expected behavior for the tested requests.
+
+Suricata records the GET detection without blocking the request. Live alerts were also verified after enabling the service and rebooting the monitor. The exported GET/HEAD records come from the earlier offline test; dates and evidence details are recorded in [test results](docs/test-results.md).
 
 ## Evidence
 
@@ -100,13 +102,14 @@ After enabling Suricata as a service and rebooting, I confirmed that live alerts
 
 The repository includes selected configuration exports and test artifacts. Selected setup screenshots are included; persistent per-VM configuration files will be added as they are collected.
 
-## Limitations
+## Current Scope
 
-- This is a small lab with traffic I generate myself, not a production SOC.
-- There is no SIEM integration, centralized dashboard or incident response workflow.
-- Detection covers one custom rule. The nftables setup is a lab configuration, not a hardened policy.
+- Controlled HTTP traffic between the lab client and server, with one custom detection rule.
+- Linux routing and nftables policy between the two subnets; Suricata operates as an alerting sensor.
+- Selected configuration exports and test artifacts are included. Persistent per-VM settings and the full Suricata service configuration remain to be exported.
 
 ## Next Steps
 
 - Export persistent per-VM network and Suricata service configuration.
 - Extend detection coverage with additional positive and negative tests.
+
