@@ -1,0 +1,23 @@
+table inet soc_lab {
+	chain input {
+		type filter hook input priority filter; policy drop;
+		iifname "lo" accept
+		ct state invalid drop
+		ct state established,related accept
+		iifname "update0" udp sport 67 udp dport 68 accept
+		iifname "mgmt0" ip saddr 172.28.77.1 tcp dport 22 counter packets 1 bytes 52 accept
+		iifname "mgmt0" ip saddr 172.28.77.1 ip protocol icmp counter packets 0 bytes 0 accept
+		iifname { "server0", "client0" } ip protocol icmp counter packets 0 bytes 0 accept
+	}
+
+	chain forward {
+		type filter hook forward priority filter; policy drop;
+		ct state invalid drop
+		iifname "client0" oifname "server0" ip saddr 10.77.10.0/24 ip daddr 10.77.20.0/24 counter packets 0 bytes 0 accept
+		iifname "server0" oifname "client0" ip saddr 10.77.20.0/24 ip daddr 10.77.10.0/24 counter packets 0 bytes 0 accept
+	}
+
+	chain output {
+		type filter hook output priority filter; policy accept;
+	}
+}

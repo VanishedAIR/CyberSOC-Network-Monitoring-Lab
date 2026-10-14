@@ -1,0 +1,5 @@
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+update0          DOWN           
+mgmt0            UP             172.28.77.10/24 
+client0          UP             10.77.10.1/24 
+server0          UP             10.77.20.1/24 

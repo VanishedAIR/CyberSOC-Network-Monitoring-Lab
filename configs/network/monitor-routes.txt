@@ -1,0 +1,3 @@
+10.77.10.0/24 dev client0 proto kernel scope link src 10.77.10.1 
+10.77.20.0/24 dev server0 proto kernel scope link src 10.77.20.1 
+172.28.77.0/24 dev mgmt0 proto kernel scope link src 172.28.77.10 

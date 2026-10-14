@@ -45,7 +45,14 @@ After enabling Suricata as a service and rebooting, I confirmed that live alerts
 
 ## Evidence
 
-Screenshots from the lab document the setup and results. Configuration files, packet captures and EVE logs remain in the lab VMs and still need to be exported into this repository.
+- [Architecture and firewall policy](docs/architecture.md)
+- [GET/HEAD results, verification commands and evidence dates](docs/test-results.md)
+- [Custom Suricata rule](configs/suricata/local.rules)
+- [GET/HEAD packet capture](evidence/pcaps/get-head.pcap)
+- [Selected HTTP and alert events](evidence/logs/get-head-events.jsonl)
+- [Monitor service status](evidence/logs/suricata-status.txt)
+
+The repository includes selected configuration exports and test artifacts. Screenshots and persistent per-VM configuration files will be added as they are collected.
 
 ## Limitations
 
@@ -55,5 +62,6 @@ Screenshots from the lab document the setup and results. Configuration files, pa
 
 ## Next Steps
 
-- Export the Suricata rule file, nftables ruleset, interface and routing configuration, and a sample PCAP into this repository.
-- Document the exact commands used to generate and verify each test.
+- Add selected screenshots and a rendered topology diagram.
+- Export persistent per-VM network and Suricata service configuration.
+- Extend detection coverage with additional positive and negative tests.

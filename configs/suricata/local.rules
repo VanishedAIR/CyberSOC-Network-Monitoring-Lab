@@ -1,0 +1,1 @@
+alert http 10.77.10.10 any -> 10.77.20.20 8080 (msg:"CyberSOC LAB - HTTP GET detected"; flow:established,to_server; http.method; content:"GET"; sid:1000001; rev:1;)
