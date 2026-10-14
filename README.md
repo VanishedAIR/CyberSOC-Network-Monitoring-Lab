@@ -13,36 +13,36 @@ Build a small segmented network, capture HTTP traffic crossing it, and detect a 
 Three Ubuntu VMs run in VMware. The monitor sits between two subnets and routes traffic from one to the other.
 
 ```mermaid
-%%{init: {"theme": "base", "flowchart": {"nodeSpacing": 25, "rankSpacing": 35, "curve": "linear", "htmlLabels": true}, "themeVariables": {"fontFamily": "Arial, sans-serif", "fontSize": "15px", "lineColor": "#526176", "clusterBkg": "#F8FAFC", "clusterBorder": "#CBD5E1"}}}%%
+%%{init: {"theme": "base", "look": "classic", "flowchart": {"nodeSpacing": 40, "rankSpacing": 45, "padding": 30, "diagramPadding": 25, "subGraphTitleMargin": {"top": 16, "bottom": 20}, "curve": "basis"}, "themeVariables": {"fontFamily": "Arial, sans-serif", "fontSize": "16px", "lineColor": "#64748B", "primaryTextColor": "#172033", "clusterBkg": "#F8FAFC", "clusterBorder": "#CBD5E1", "edgeLabelBackground": "#F8FAFC"}}}%%
 graph TD
-    subgraph CLIENT_NET["Client subnet · 10.77.10.0/24"]
-        CLIENT(["Client · curl<br/>10.77.10.10"])
+    subgraph CLIENT_NET["Client network · 10.77.10.0/24"]
+        CLIENT(["Client · GET / HEAD<br/>10.77.10.10"])
     end
 
-    subgraph MONITOR["Ubuntu monitor · router + sensor"]
+    subgraph MONITOR["Monitor · Ubuntu router + sensor"]
         ROUTER(["IPv4 forwarding + nftables<br/>client0 · 10.77.10.1<br/>server0 · 10.77.20.1"])
-        IDS(["Suricata on client0<br/>GET rule · SID 1000001"])
-        LOGS(["EVE JSON → jq"])
-        ROUTER -. "traffic inspection" .-> IDS
+        IDS(["Suricata · traffic inspection<br/>GET rule · SID 1000001"])
+        LOGS(["EVE JSON alerts<br/>Inspect with jq"])
+        ROUTER -.-> IDS
         IDS --> LOGS
     end
 
-    subgraph SERVER_NET["Server subnet · 10.77.20.0/24"]
+    subgraph SERVER_NET["Server network · 10.77.20.0/24"]
         SERVER(["Python HTTP server<br/>10.77.20.20:8080"])
     end
 
-    subgraph MANAGEMENT["Management network · 172.28.77.0/24"]
-        HOST(["Windows host<br/>172.28.77.1"])
+    subgraph MANAGEMENT["Management · SSH"]
+        HOST(["Windows host · 172.28.77.1<br/>SSH to 172.28.77.10:22"])
     end
 
-    CLIENT <-->|"HTTP"| ROUTER
-    ROUTER <-->|"HTTP"| SERVER
-    HOST -. "SSH · TCP 22<br/>mgmt0 · 172.28.77.10" .-> ROUTER
+    CLIENT <--> ROUTER
+    ROUTER <--> SERVER
+    HOST -.-> ROUTER
 
-    style CLIENT_NET fill:#F1F5FC,stroke:#CBD5E1,stroke-width:1px
-    style MONITOR fill:#F8F6FC,stroke:#CBD5E1,stroke-width:1px
-    style SERVER_NET fill:#F1F5FC,stroke:#CBD5E1,stroke-width:1px
-    style MANAGEMENT fill:#F8FAFC,stroke:#CBD5E1,stroke-width:1px
+    style CLIENT_NET fill:#F1F5FC,stroke:#CBD5E1,stroke-width:1px,rx:22px,ry:22px
+    style MONITOR fill:#F8F6FC,stroke:#CBD5E1,stroke-width:1px,rx:22px,ry:22px
+    style SERVER_NET fill:#F1F5FC,stroke:#CBD5E1,stroke-width:1px,rx:22px,ry:22px
+    style MANAGEMENT fill:#F8FAFC,stroke:#CBD5E1,stroke-width:1px,rx:22px,ry:22px
 
     classDef endpoint fill:#E8F0FC,stroke:#26364A,stroke-width:1.5px,color:#172033;
     classDef routing fill:#EDE9F8,stroke:#26364A,stroke-width:1.5px,color:#172033;
@@ -53,6 +53,8 @@ graph TD
     class IDS,LOGS detection;
     class HOST management;
 ```
+
+**Reading the diagram:** The two-way arrows carry HTTP requests and responses. Dashed arrows show the separate management SSH connection and traffic inspection by Suricata on `client0`. The arrow from Suricata to EVE JSON represents log output.
 
 | VM | Role | Address |
 |---|---|---|
